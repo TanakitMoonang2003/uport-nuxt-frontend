@@ -10,10 +10,15 @@ export default defineNuxtPlugin(() => {
   // ✅ Remove trailing slashes to prevent double slash in URLs
   const cleanBaseURL = apiBaseURL.replace(/\/+$/, '');
 
-  console.log('🔧 API Base URL:', cleanBaseURL);
+  // ✅ Ensure the base URL always points to the /api prefix
+  //    - If env ให้มาเป็นแค่ https://domain.com ก็จะถูกแปลงเป็น https://domain.com/api
+  //    - ถ้าให้มาเป็น https://domain.com/api อยู่แล้ว จะไม่เพิ่มซ้ำ
+  const finalBaseURL = cleanBaseURL.endsWith('/api') ? cleanBaseURL : `${cleanBaseURL}/api`;
+
+  console.log('🔧 API Base URL:', finalBaseURL);
 
   const api = axios.create({
-    baseURL: cleanBaseURL,
+    baseURL: finalBaseURL,
     withCredentials: true,
   });
 
