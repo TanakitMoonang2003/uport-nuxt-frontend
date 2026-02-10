@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global input styling for better visibility */
+@layer base {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  textarea,
+  select {
+    @apply bg-white text-gray-900 placeholder-gray-500;
+  }
+  
+  /* Ensure input focus states are visible */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply ring-2 ring-amber-400 border-amber-400;
+  }
+  
+  /* Dark mode support for better contrast */
+  @media (prefers-color-scheme: dark) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    textarea,
+    select {
+      @apply bg-gray-50 text-gray-900 placeholder-gray-600;
+    }
+  }
+}
