@@ -6,9 +6,14 @@ export default defineNuxtPlugin(() => {
   // Browser always uses localhost (client-side requests)
   // Environment variable can override for SSR if needed
   const apiBaseURL = config.public.apiBase || process.env.NUXT_PUBLIC_API_BASE || "http://localhost:3001/api";
-  
+
+  // ✅ Remove trailing slashes to prevent double slash in URLs
+  const cleanBaseURL = apiBaseURL.replace(/\/+$/, '');
+
+  console.log('🔧 API Base URL:', cleanBaseURL);
+
   const api = axios.create({
-    baseURL: apiBaseURL,
+    baseURL: cleanBaseURL,
     withCredentials: true,
   });
 
@@ -21,7 +26,7 @@ export default defineNuxtPlugin(() => {
     console.log('🔍 Full URL:', `${config.baseURL}${config.url}`);
     console.log('🔍 Headers:', config.headers);
     console.log('🔍 Data:', config.data);
-    
+
     const token = useCookie("token").value;
     if (token) {
       // ตรวจว่ามี headers ก่อน
