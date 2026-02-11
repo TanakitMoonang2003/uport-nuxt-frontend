@@ -476,6 +476,9 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useAuth } from '~/composables/useAuth'
 
+const config = useRuntimeConfig()
+const apiBase = config.public.apiBase.replace(/\/api$/, '')
+
 const mobileMenuOpen = ref(false)
 const showNotifications = ref(false)
 const pendingTeachersCount = ref(0)
@@ -559,7 +562,7 @@ const fetchPendingNotifications = async () => {
     // Fetch pending teachers
     const teachersResponse = await $fetch('/api/teacher-confirmations', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -575,7 +578,7 @@ const fetchPendingNotifications = async () => {
     // Fetch pending companies
     const companiesResponse = await $fetch('/api/company-approvals', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -591,7 +594,7 @@ const fetchPendingNotifications = async () => {
     // Fetch pending portfolios
     const portfoliosResponse = await $fetch('/api/portfolio/pending', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -618,7 +621,7 @@ const testBackendConnection = async () => {
     console.log('Testing backend connection...');
     const response = await $fetch('/api/test', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
     });
     console.log('Backend connection test result:', response);
   } catch (error) {
@@ -753,7 +756,7 @@ const showNotificationModal = async (type) => {
     if (type === 'teachers') {
       console.log('Fetching pending teachers...');
       const response = await $fetch('/api/admin/pending-teachers', {
-        baseURL: 'http://localhost:3001'
+        baseURL: apiBase
       });
       console.log('Pending teachers response:', response);
       
@@ -782,7 +785,7 @@ const showNotificationModal = async (type) => {
     } else if (type === 'companies') {
       console.log('Fetching pending companies...');
       const response = await $fetch('/api/admin/pending-companies', {
-        baseURL: 'http://localhost:3001'
+        baseURL: apiBase
       });
       console.log('Pending companies response:', response);
       
@@ -875,7 +878,7 @@ const fetchModalData = async (type) => {
     if (type === 'teachers') {
       const response = await $fetch('/api/teacher-confirmations', {
         method: 'GET',
-        baseURL: 'http://localhost:3001',
+        baseURL: apiBase,
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json',
@@ -891,7 +894,7 @@ const fetchModalData = async (type) => {
     } else if (type === 'companies') {
       const response = await $fetch('/api/company-approvals', {
         method: 'GET',
-        baseURL: 'http://localhost:3001',
+        baseURL: apiBase,
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json',
@@ -940,7 +943,7 @@ const confirmTeacher = async (teacherId, action) => {
     
     const response = await $fetch('/api/teacher-confirmations', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -994,7 +997,7 @@ const confirmCompany = async (companyId, action) => {
     
     const response = await $fetch('/api/company-approvals', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',

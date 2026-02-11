@@ -873,6 +873,10 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
+import { useAuth } from "~/composables/useAuth";
+
+const config = useRuntimeConfig()
+const apiBase = config.public.apiBase.replace(/\/api$/, '')
 
 // Use auth layout (no navbar)
 definePageMeta({
@@ -1084,19 +1088,19 @@ const handleSubmit = async () => {
     } else {
       // Send OTP first for email verification for students and teachers
       console.log("Sending OTP to:", data.email);
-      console.log("Using API base URL:", "http://localhost:3001/api");
+      console.log("Using API base URL:", apiBase + "/api");
       
       const { $api } = useNuxtApp();
       console.log("API instance:", $api);
       
       try {
         console.log("About to make OTP request...");
-        console.log("Request URL will be: http://localhost:3001/api/auth/send-otp");
+        console.log(`Request URL will be: ${apiBase}/api/auth/send-otp`);
         console.log("Request data:", { email: data.email });
         
         // Try using fetch directly instead of axios
         console.log("Using fetch instead of axios...");
-        const response = await fetch('http://localhost:3001/api/auth/send-otp', {
+        const response = await fetch(`${apiBase}/api/auth/send-otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

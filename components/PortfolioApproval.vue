@@ -153,6 +153,9 @@
 import { ref, onMounted } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase.replace(/\/api$/, '');
+
 const { token, user } = useAuth();
 
 // Check if user is admin or teacher
@@ -193,7 +196,7 @@ const fetchPendingPortfolios = async () => {
     
     const response = await $fetch('/api/portfolio/pending', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -241,7 +244,7 @@ const handleApprove = async (portfolio) => {
     
     const response = await $fetch('/api/portfolio/approve', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -302,7 +305,7 @@ const handleReject = async (portfolio) => {
     
     const response = await $fetch('/api/portfolio/approve', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',

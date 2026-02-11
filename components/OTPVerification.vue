@@ -97,6 +97,9 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
+const config = useRuntimeConfig()
+const apiBase = config.public.apiBase.replace(/\/api$/, '')
+
 const props = defineProps({
   isOpen: {
     type: Boolean,
@@ -156,7 +159,7 @@ const verifyOTP = async () => {
     // Call OTP verification API
     const response = await $fetch('/api/auth/verify-otp', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       body: {
         email: props.email,
         otp: otp
@@ -183,7 +186,7 @@ const resendOTP = async () => {
   try {
     const response = await $fetch('/api/auth/send-otp', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       body: {
         email: props.email
       }

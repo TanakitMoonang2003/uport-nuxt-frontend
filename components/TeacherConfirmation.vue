@@ -160,6 +160,9 @@
 import { ref, onMounted } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase.replace(/\/api$/, '');
+
 const { user, token } = useAuth();
 
 const pendingTeachers = ref([]);
@@ -209,7 +212,7 @@ const fetchPendingTeachers = async () => {
     
     const response = await $fetch('/api/teacher-confirmations', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -268,7 +271,7 @@ const confirmTeacher = async (teacherId, action) => {
     
     const response = await $fetch('/api/teacher-confirmations', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',

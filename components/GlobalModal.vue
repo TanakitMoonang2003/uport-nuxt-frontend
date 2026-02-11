@@ -301,6 +301,9 @@
 <script setup>
 import { useModal } from '~/composables/useModal'
 
+const config = useRuntimeConfig()
+const apiBase = config.public.apiBase.replace(/\/api$/, '')
+
 const { modalData, closeModal } = useModal()
 
 // Helper functions
@@ -330,7 +333,7 @@ const formatDate = (dateString) => {
 const handleTeacherAction = async (teacherId, action) => {
   try {
     await $fetch('/api/admin/confirm-teacher', {
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       method: 'POST',
       body: {
         teacherId,
@@ -348,7 +351,7 @@ const handleTeacherAction = async (teacherId, action) => {
 const handleCompanyAction = async (companyId, action) => {
   try {
     await $fetch('/api/admin/confirm-company', {
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       method: 'POST',
       body: {
         companyId,

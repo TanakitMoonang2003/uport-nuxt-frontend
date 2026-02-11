@@ -156,6 +156,9 @@
 import { ref, onMounted } from 'vue';
 import { useAuth } from '~/composables/useAuth';
 
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase.replace(/\/api$/, '');
+
 const { user, token } = useAuth();
 
 const pendingCompanies = ref([]);
@@ -173,7 +176,7 @@ const fetchPendingCompanies = async () => {
     
     const response = await $fetch('/api/company-approvals', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${token.value}`,
         'Content-Type': 'application/json',
@@ -211,7 +214,7 @@ const approveCompany = async (companyId, action) => {
     
     const response = await $fetch('/api/company-approvals', {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${token.value}`,
         'Content-Type': 'application/json',

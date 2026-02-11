@@ -3,16 +3,14 @@ import type { InternalAxiosRequestConfig } from "axios";
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
-  // Browser always uses localhost (client-side requests)
-  // Environment variable can override for SSR if needed
-  const apiBaseURL = config.public.apiBase || process.env.NUXT_PUBLIC_API_BASE || "http://localhost:3001/api";
+
+  // Use apiBase from runtime config as the source of truth
+  const apiBaseURL = config.public.apiBase;
 
   // ✅ Remove trailing slashes to prevent double slash in URLs
   const cleanBaseURL = apiBaseURL.replace(/\/+$/, '');
 
   // ✅ Ensure the base URL always points to the /api prefix
-  //    - If env ให้มาเป็นแค่ https://domain.com ก็จะถูกแปลงเป็น https://domain.com/api
-  //    - ถ้าให้มาเป็น https://domain.com/api อยู่แล้ว จะไม่เพิ่มซ้ำ
   const finalBaseURL = cleanBaseURL.endsWith('/api') ? cleanBaseURL : `${cleanBaseURL}/api`;
 
   console.log('🔧 API Base URL:', finalBaseURL);

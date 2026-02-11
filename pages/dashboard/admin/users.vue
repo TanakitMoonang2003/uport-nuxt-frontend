@@ -318,8 +318,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useAuth } from '~/composables/useAuth'
+const config = useRuntimeConfig()
+const apiBase = config.public.apiBase.replace(/\/api$/, '')
 
 // Check if user is admin
 const { user, isAuthenticated, token } = useAuth()
@@ -411,7 +411,7 @@ const fetchUsers = async () => {
     
     const response = await $fetch('/api/admin/users', {
       method: 'GET',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -464,7 +464,7 @@ const saveUser = async () => {
     
     const response = await $fetch(`/api/admin/users/${editingUser.value._id || editingUser.value.id}`, {
       method: 'PUT',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -512,7 +512,7 @@ const toggleUserStatus = async (user) => {
     const userId = user._id || user.id;
     const response = await $fetch(`/api/admin/users/${userId}/status`, {
       method: 'POST',
-      baseURL: 'http://localhost:3001',
+      baseURL: apiBase,
       headers: {
         'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
@@ -560,7 +560,7 @@ const deleteUser = async (user) => {
       const userId = user._id || user.id;
       const response = await $fetch(`/api/admin/users/${userId}`, {
         method: 'DELETE',
-        baseURL: 'http://localhost:3001',
+        baseURL: apiBase,
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json',
