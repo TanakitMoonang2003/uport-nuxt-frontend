@@ -280,10 +280,19 @@ const validateForm = () => {
     return false
   }
   
-  // Validate file size (100MB limit)
-  if (selectedFile.value.size > 100 * 1024 * 1024) {
-    errorMessage.value = 'ขนาดไฟล์ต้องไม่เกิน 100MB'
-    return false
+  // Validate file size
+  if (selectedFile.value.type.startsWith('image/')) {
+    // For images, we will try to compress them, so we allow up to 10MB initially
+    if (selectedFile.value.size > 10 * 1024 * 1024) {
+      errorMessage.value = 'ขนาดไฟล์ภาพต้องไม่เกิน 10MB'
+      return false
+    }
+  } else {
+    // For non-images (PDF, Video), Vercel has a 4.5MB limit for base64
+    if (selectedFile.value.size > 4 * 1024 * 1024) {
+      errorMessage.value = 'ไฟล์ประเภทนี้ (PDF/Video) ต้องมีขนาดไม่เกิน 4MB เนื่องจากข้อจำกัดของระบบ'
+      return false
+    }
   }
   
   // Validate file type
@@ -314,22 +323,27 @@ const handleSubmit = async () => {
   successMessage.value = ''
   
   try {
-    // Convert file to base64 for upload
-    const fileBase64 = await convertFileToBase64(selectedFile.value)
-    
-    // Check if uploaded file is an image
+    let fileBase64 = '';
     const isImage = selectedFile.value.type.startsWith('image/');
+
+    if (isImage) {
+      // Compress image before converting to base64
+      fileBase64 = await compressImage(selectedFile.value);
+    } else {
+      // Convert other files directly to base64
+      fileBase64 = await convertFileToBase64(selectedFile.value);
+    }
     
     const portfolioData = {
       category: category.value,
       title: title.value.trim() || `Portfolio Submission - ${new Date().toLocaleDateString()}`,
       description: details.value.substring(0, 100) + (details.value.length > 100 ? '...' : ''),
       fullDescription: details.value,
-      technologies: [], // Will be extracted from repo or manually added later
-      image: isImage ? fileBase64 : '', // Use base64 if it's an image
+      technologies: [],
+      image: isImage ? fileBase64 : '', 
       demoUrl: repoUrl.value,
       githubUrl: repoUrl.value,
-      features: [], // Will be extracted from details
+      features: [], 
       duration: 'N/A',
       client: 'Personal Project',
       uploadedFile: fileBase64,
@@ -360,6 +374,48 @@ const convertFileToBase64 = (file) => {
     reader.onerror = error => reject(error)
   })
 }
+
+// Function to compress image using canvas
+const compressImage = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Compress with 0.7 quality to stay under 1-2MB
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(dataUrl);
+      };
+      img.onerror = error => reject(error);
+    };
+    reader.onerror = error => reject(error);
+  });
+};
 
 const handleReset = () => {
   selectedFile.value = null
