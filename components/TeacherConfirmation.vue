@@ -190,7 +190,7 @@ const fetchPendingTeachers = async () => {
     // If token from useAuth is null, try localStorage
     if (!authToken && import.meta.client) {
       authToken = localStorage.getItem('auth_token');
-      console.log('🔍 Token from localStorage:', authToken);
+     
     }
     
     // If still no token, try cookie directly
@@ -200,11 +200,9 @@ const fetchPendingTeachers = async () => {
         .find(row => row.startsWith('token='))
         ?.split('=')[1];
       authToken = cookieToken;
-      console.log('🔍 Token from document.cookie:', authToken);
+      
     }
-    
-    console.log('🔍 Final token for API call:', authToken);
-    console.log('🔍 Token length:', authToken?.length);
+ 
     
     if (!authToken) {
       throw new Error('No authentication token found. Please login again.');
@@ -221,7 +219,7 @@ const fetchPendingTeachers = async () => {
 
     if (response.success) {
       pendingTeachers.value = response.data;
-      console.log('✅ Teacher confirmations fetched successfully:', response.data);
+     
     } else {
       errorMessage.value = response.error || 'Failed to fetch teacher confirmations';
       console.error('❌ API error response:', response);
@@ -267,7 +265,7 @@ const confirmTeacher = async (teacherId, action) => {
       throw new Error('No authentication token found. Please login again.');
     }
     
-    console.log('🔍 Processing teacher confirmation:', { teacherId, action });
+  
     
     const response = await $fetch('/api/teacher-confirmations', {
       method: 'POST',
@@ -287,7 +285,7 @@ const confirmTeacher = async (teacherId, action) => {
       // Remove the teacher from the list
       pendingTeachers.value = pendingTeachers.value.filter(t => t._id !== teacherId);
       
-      console.log('✅ Teacher confirmation processed successfully:', response.message);
+     
     } else {
       errorMessage.value = response.error || 'Failed to process teacher confirmation';
       console.error('❌ API error response:', response);

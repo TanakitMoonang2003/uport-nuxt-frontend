@@ -503,22 +503,12 @@ const { user, token, isAuthenticated, logout, forceUpdate } = useAuth()
 const { openModal } = useModal()
 
 // Debug authentication state (only in client-side)
-if (import.meta.client) {
-  console.log('=== NAVBAR AUTH STATE ===');
-  console.log('isAuthenticated:', isAuthenticated.value);
-  console.log('user:', user.value);
-  console.log('token exists:', !!token.value);
-  console.log('Token value in Navbar:', token.value);
-}
+
 
 // Force reactivity check
 const authDebug = computed(() => {
   // Only log in client-side
   if (import.meta.client) {
-    console.log('=== NAVBAR AUTH COMPUTED ===');
-    console.log('isAuthenticated.value:', isAuthenticated.value);
-    console.log('user.value:', user.value);
-    console.log('token.value exists:', !!token.value);
   }
   return {
     isAuth: isAuthenticated.value,
@@ -534,7 +524,6 @@ const totalPendingCount = computed(() => {
 // Fetch pending notifications with actual data
 const fetchPendingNotifications = async () => {
   if (!isAuthenticated.value || (user.value?.role !== 'admin' && user.value?.role !== 'teacher')) {
-    console.log('Skipping notification fetch - not authenticated or not admin/teacher');
     return
   }
 
@@ -552,12 +541,10 @@ const fetchPendingNotifications = async () => {
   }
 
   if (!authToken) {
-    console.log('No token available for API calls');
     return
   }
 
   try {
-    console.log('Fetching notifications with token:', authToken?.substring(0, 20) + '...');
     
     // Fetch pending teachers
     const teachersResponse = await $fetch('/api/teacher-confirmations', {
@@ -572,7 +559,7 @@ const fetchPendingNotifications = async () => {
     if (teachersResponse.success) {
       pendingTeachers.value = teachersResponse.data.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       pendingTeachersCount.value = teachersResponse.data.length
-      console.log('Pending teachers fetched:', pendingTeachers.value);
+
     }
 
     // Fetch pending companies
@@ -588,7 +575,6 @@ const fetchPendingNotifications = async () => {
     if (companiesResponse.success) {
       pendingCompanies.value = companiesResponse.data.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
       pendingCompaniesCount.value = companiesResponse.data.length
-      console.log('Pending companies fetched:', pendingCompanies.value);
     }
 
     // Fetch pending portfolios
@@ -603,7 +589,7 @@ const fetchPendingNotifications = async () => {
 
     if (portfoliosResponse.success) {
       pendingPortfoliosCount.value = portfoliosResponse.data.length
-      console.log('Pending portfolios fetched:', portfoliosResponse.data);
+    
     }
   } catch (error) {
     console.error('Error fetching notifications:', error)
@@ -618,12 +604,12 @@ const fetchPendingNotifications = async () => {
 // Test backend connection
 const testBackendConnection = async () => {
   try {
-    console.log('Testing backend connection...');
+   
     const response = await $fetch('/api/test', {
       method: 'GET',
       baseURL: apiBase,
     });
-    console.log('Backend connection test result:', response);
+   
   } catch (error) {
     console.error('Backend connection test failed:', error);
   }
@@ -632,10 +618,7 @@ const testBackendConnection = async () => {
 // Fetch on mount and every 30 seconds
 onMounted(() => {
   if (import.meta.client) {
-    console.log('=== NAVBAR MOUNTED ===');
-    console.log('Initial auth state:', { isAuthenticated: isAuthenticated.value, user: user.value });
-    console.log('Token from cookie on mount:', token.value);
-    console.log('Force update value on mount:', forceUpdate.value);
+
     
     // Test backend connection first
     testBackendConnection()
@@ -645,10 +628,7 @@ onMounted(() => {
     
     // Force refresh auth state after a short delay
     setTimeout(() => {
-      console.log('=== NAVBAR DELAYED CHECK ===');
-      console.log('Delayed auth state:', { isAuthenticated: isAuthenticated.value, user: user.value });
-      console.log('Token from cookie delayed:', token.value);
-      console.log('Force update value delayed:', forceUpdate.value);
+    
     }, 1000)
   }
 })
@@ -657,20 +637,17 @@ onMounted(() => {
 watch([isAuthenticated, user], ([newIsAuthenticated, newUser]) => {
   // Only log in client-side
   if (import.meta.client) {
-    console.log('=== NAVBAR AUTH WATCH ===');
-    console.log('isAuthenticated changed:', newIsAuthenticated);
-    console.log('user changed:', newUser);
-    console.log('user role:', newUser?.role);
+ 
   }
   
     if (newIsAuthenticated && newUser) {
       if (import.meta.client) {
-        console.log('✅ User is authenticated and user data exists');
+ 
       }
       
       if (newUser.role === 'admin' || newUser.role === 'teacher') {
         if (import.meta.client) {
-          console.log('Admin/Teacher detected - fetching notifications');
+        
         }
         // Add delay to ensure token is available
         setTimeout(() => {
@@ -681,14 +658,14 @@ watch([isAuthenticated, user], ([newIsAuthenticated, newUser]) => {
       // Log admin navigation visibility (only in client)
       if (import.meta.client) {
         if (newUser.role === 'admin') {
-          console.log('🎯 ADMIN NAVIGATION SHOULD BE VISIBLE');
+        
         } else {
-          console.log('❌ Admin navigation hidden - user role:', newUser.role);
+        
         }
       }
     } else {
       if (import.meta.client) {
-        console.log('❌ User not authenticated or no user data');
+
       }
       // Reset notification counts when not authenticated
       pendingTeachersCount.value = 0
@@ -708,61 +685,52 @@ const handleProfileClick = () => {
 
 const handleLogout = async () => {
   // Use logout from useAuth composable
-  console.log('=== NAVBAR LOGOUT CLICKED ===');
+
   showNotifications.value = false
   await logout()
 }
 
 const forceRefresh = () => {
-  console.log('=== FORCE REFRESH CLICKED ===');
-  console.log('Current auth state:', { isAuthenticated: isAuthenticated.value, user: user.value });
-  console.log('Current token from useAuth:', token.value);
-  console.log('Current forceUpdate value:', forceUpdate.value);
+ 
   
   // Force re-read the token
   const currentToken = useCookie('token');
-  console.log('Current token from cookie:', currentToken.value);
+
   
   // Check all cookies and localStorage
-  console.log('=== ALL COOKIES & STORAGE DEBUG ===');
-  console.log('Document cookies:', document.cookie);
-  console.log('Token cookie value:', currentToken.value);
-  console.log('Cookie consent value:', useCookie('cookie_consent').value);
-  console.log('localStorage auth_token:', localStorage.getItem('auth_token'));
-  console.log('localStorage keys:', Object.keys(localStorage));
+ 
   
   // Force reactivity update by incrementing forceUpdate
   if (currentToken.value) {
-    console.log('Token exists, forcing reactivity update...');
+
     forceUpdate.value++
-    console.log('Force update incremented to:', forceUpdate.value);
+   
     
     // Trigger reactivity by accessing the computed values
     const authState = isAuthenticated.value;
     const userData = user.value;
-    console.log('After force refresh:', { authState, userData });
-    console.log('Token after force refresh:', token.value);
+
   } else {
-    console.log('No token found in cookie');
+   
   }
 }
 
 // Modal functions
 const showNotificationModal = async (type) => {
-  console.log('Opening modal for:', type);
+
   showNotifications.value = false; // Close the notification dropdown
   
   try {
     if (type === 'teachers') {
-      console.log('Fetching pending teachers...');
+
       const response = await $fetch('/api/admin/pending-teachers', {
         baseURL: apiBase
       });
-      console.log('Pending teachers response:', response);
+ 
       
       if (response.success) {
         pendingTeachers.value = response.data || [];
-        console.log('Pending teachers set:', pendingTeachers.value);
+     
         
         // Open global modal
         openModal({
@@ -783,15 +751,15 @@ const showNotificationModal = async (type) => {
         });
       }
     } else if (type === 'companies') {
-      console.log('Fetching pending companies...');
+     
       const response = await $fetch('/api/admin/pending-companies', {
         baseURL: apiBase
       });
-      console.log('Pending companies response:', response);
+    
       
       if (response.success) {
         pendingCompanies.value = response.data || [];
-        console.log('Pending companies set:', pendingCompanies.value);
+     
         
         // Open global modal
         openModal({
@@ -842,7 +810,7 @@ const closeModal = () => {
 }
 
 const cancelNotification = (type) => {
-  console.log('Canceling notification for:', type);
+  
   if (type === 'teachers') {
     pendingTeachersCount.value = 0;
   } else if (type === 'companies') {
@@ -887,7 +855,7 @@ const fetchModalData = async (type) => {
       
       if (response.success) {
         pendingTeachers.value = response.data;
-        console.log('✅ Teachers fetched for modal:', response.data);
+       
       } else {
         errorMessage.value = response.error || 'Failed to fetch teachers';
       }
@@ -903,7 +871,7 @@ const fetchModalData = async (type) => {
       
       if (response.success) {
         pendingCompanies.value = response.data;
-        console.log('✅ Companies fetched for modal:', response.data);
+        
       } else {
         errorMessage.value = response.error || 'Failed to fetch companies';
       }
@@ -958,7 +926,7 @@ const confirmTeacher = async (teacherId, action) => {
       // Remove the teacher from the list
       pendingTeachers.value = pendingTeachers.value.filter(t => t._id !== teacherId);
       pendingTeachersCount.value = Math.max(0, pendingTeachersCount.value - 1);
-      console.log('✅ Teacher confirmation processed:', response.message);
+     
     } else {
       errorMessage.value = response.error || 'Failed to process teacher confirmation';
     }
@@ -1012,7 +980,7 @@ const confirmCompany = async (companyId, action) => {
       // Remove the company from the list
       pendingCompanies.value = pendingCompanies.value.filter(c => c._id !== companyId);
       pendingCompaniesCount.value = Math.max(0, pendingCompaniesCount.value - 1);
-      console.log('✅ Company confirmation processed:', response.message);
+     
     } else {
       errorMessage.value = response.error || 'Failed to process company confirmation';
     }

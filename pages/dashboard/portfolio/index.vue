@@ -183,12 +183,7 @@ const filteredItems = computed(() => {
   // Only show approved items (should already be filtered by API, but ensure)
   filtered = filtered.filter(item => item.status === 'approved');
   
-  console.log('🔍 Filtered items:', {
-    selectedCategory: selectedCategory.value,
-    totalItems: portfolioItems.value.length,
-    filteredCount: filtered.length,
-    items: filtered.map(i => ({ id: i.id, title: i.title, category: i.category, status: i.status }))
-  });
+
   
   return filtered;
 });
@@ -218,18 +213,13 @@ watch(selectedCategory, async () => {
 const loadPortfolioItems = async () => {
   loading.value = true;
   try {
-    console.log('=== PORTFOLIO PAGE DEBUG ===');
-    console.log('Loading portfolio items for category:', selectedCategory.value);
+    
     
     const items = await getPortfolioItemsByCategory(selectedCategory.value);
     portfolioItems.value = items;
     // Reset visible count whenever we (re)load items
     itemsToShow.value = ITEMS_PER_PAGE;
-    
-    console.log('Loaded portfolio items:', items);
-    console.log('Number of items:', items?.length || 0);
-    console.log('Filtered items:', filteredItems.value);
-    console.log('============================');
+   
   } catch (error) {
     console.error('Error loading portfolio items:', error);
     portfolioItems.value = [];
@@ -248,10 +238,7 @@ const loadMoreProjects = () => {
 
 // Handle portfolio item click
 const handlePortfolioClick = (item) => {
-  console.log('=== PORTFOLIO CLICK DEBUG ===');
-  console.log('Clicked portfolio item:', item);
-  console.log('Navigating to:', `/dashboard/portfolio/${item.id}`);
-  console.log('=============================');
+
   
   // Use window.location for more reliable navigation
   window.location.href = `/dashboard/portfolio/${item.id}`;

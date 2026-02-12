@@ -201,15 +201,7 @@ const isOwner = computed(() => {
   const userEmail = user.value?.email;
   const portfolioOwner = portfolioItem.value?.submittedBy;
   const matches = userEmail === portfolioOwner;
-  
-  console.log('🔐 Ownership Check:', {
-    hasUser,
-    hasPortfolio,
-    userEmail,
-    portfolioOwner,
-    matches,
-    isOwner: hasUser && hasPortfolio && matches
-  });
+
   
   if (!user.value || !portfolioItem.value) return false;
   return user.value.email === portfolioItem.value.submittedBy;
@@ -223,16 +215,11 @@ onMounted(async () => {
 const loadPortfolioItem = async () => {
   loading.value = true;
   try {
-    console.log('=== PORTFOLIO DETAIL PAGE DEBUG ===');
-    console.log('Portfolio detail page loaded with ID:', id);
-    console.log('Route params:', route.params);
-    console.log('Attempting to load portfolio item...');
+
     
     const item = await getPortfolioItemById(id);
     portfolioItem.value = item;
-    
-    console.log('Portfolio item loaded:', item);
-    console.log('====================================');
+ 
 
     // Set page title
     if (item) {
@@ -259,30 +246,28 @@ const getPortfolioImage = (item) => {
   
   // Priority 1: Use uploaded file (base64) if it's an image
   if (item.uploadedFile && item.uploadedFile.startsWith('data:image')) {
-    console.log('📸 Using uploadedFile (base64) for image');
+ 
     return item.uploadedFile;
   }
   
   // Priority 2: Use image URL if valid and not a placeholder
   if (item.image && item.image !== '' && !item.image.includes('placeholder')) {
-    console.log('📸 Using image URL:', item.image);
+   
     return item.image;
   }
   
-  // Priority 3: Fallback to themed placeholder
-  console.log('📸 Using fallback placeholder image');
+
   return 'https://placehold.co/800x600/FCD34D/1F2937?text=Portfolio+Image';
 };
 
 // Handle image load errors
 const handleImageError = (event) => {
-  console.log('❌ Image failed to load, using fallback');
   event.target.src = 'https://placehold.co/800x600/FCD34D/1F2937?text=Image+Not+Available';
 };
 
 // Handle portfolio update from modal
 const handlePortfolioUpdated = async () => {
-  console.log('Portfolio updated, reloading data...');
+
   await loadPortfolioItem();
 };
 </script>

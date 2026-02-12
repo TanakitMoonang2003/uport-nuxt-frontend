@@ -322,7 +322,7 @@ const loadProfile = async () => {
   
   try {
     const data = await getUserProfile();
-    console.log('Profile data loaded:', data);
+
     
     // Update profile data
     profileData.value = {
@@ -391,7 +391,7 @@ const uploadImage = async () => {
 
   try {
     const result = await uploadAvatar(selectedFile.value);
-    console.log('Avatar upload result:', result);
+
     
     // Update avatar URL
     if (result.avatarUrl) {
@@ -441,9 +441,9 @@ const handleSubmit = async () => {
       updateData.department = profileData.value.department;
     }
 
-    console.log('Updating profile with data:', updateData);
+
     const result = await updateUserProfile(updateData);
-    console.log('Profile update result:', result);
+
 
     successMessage.value = 'Profile updated successfully!';
     setTimeout(() => successMessage.value = '', 3000);

@@ -277,7 +277,7 @@ const settings = ref({
 const saveSettings = async () => {
   try {
     // API call to save settings
-    console.log('Saving settings:', settings.value)
+
     // Show success message
     alert('Settings saved successfully!')
   } catch (error) {
@@ -287,28 +287,22 @@ const saveSettings = async () => {
 }
 
 const exportUsers = () => {
-  console.log('Exporting users...')
-  // Implement user export functionality
+
 }
 
 const clearCache = () => {
-  console.log('Clearing cache...')
-  // Implement cache clearing
+
 }
 
 const runBackup = () => {
-  console.log('Running backup...')
-  // Implement backup functionality
+
 }
 
 const viewLogs = () => {
-  console.log('Viewing logs...')
-  // Implement log viewing
 }
 
 // Lifecycle
 onMounted(() => {
-  // Load settings from API
-  console.log('Loading admin settings...')
+
 })
 </script>

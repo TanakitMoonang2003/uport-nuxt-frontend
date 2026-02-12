@@ -995,13 +995,7 @@ const handleSubmit = async () => {
       return;
     }
     
-    // Debug logging
-    console.log("Form data:", data);
-    console.log("Password:", data.password);
-    console.log("Confirm Password:", data.confirmPassword);
-    console.log("Username:", data.username);
-    console.log("UserType (activeTab):", activeTab.value);
-    console.log("All studentData:", studentData.value);
+
     
     // Basic validation
     if (!data.email || !data.username || !data.password) {
@@ -1027,7 +1021,7 @@ const handleSubmit = async () => {
       ...(activeTab.value === 'company' && { otpVerified: true })
     };
 
-    console.log("Prepared registration data:", registrationData);
+
 
     // Add fields based on user type
     if (activeTab.value === "student") {
@@ -1067,8 +1061,6 @@ const handleSubmit = async () => {
       const { $api } = useNuxtApp();
       const response = await $api.post('/auth/register', registrationData);
 
-      console.log("Company registration response:", response);
-      console.log("Company registration response.data:", response.data);
 
       if (response.data.success) {
         successMessage.value = "Registration successful! You can now log in.";
@@ -1086,20 +1078,13 @@ const handleSubmit = async () => {
         errorMessage.value = response.data.error || "Registration failed";
       }
     } else {
-      // Send OTP first for email verification for students and teachers
-      console.log("Sending OTP to:", data.email);
-      console.log("Using API base URL:", apiBase + "/api");
+   
       
       const { $api } = useNuxtApp();
-      console.log("API instance:", $api);
+
       
       try {
-        console.log("About to make OTP request...");
-        console.log(`Request URL will be: ${apiBase}/api/auth/send-otp`);
-        console.log("Request data:", { email: data.email });
-        
-        // Try using fetch directly instead of axios
-        console.log("Using fetch instead of axios...");
+
         const response = await fetch(`${apiBase}/api/auth/send-otp`, {
           method: 'POST',
           headers: {
@@ -1109,11 +1094,10 @@ const handleSubmit = async () => {
           body: JSON.stringify({ email: data.email })
         });
         
-        console.log("Fetch response status:", response.status);
-        console.log("Fetch response ok:", response.ok);
+
         
         const otpResponse = await response.json();
-        console.log("OTP Response received:", otpResponse);
+
 
         if (otpResponse.success) {
           // Show OTP modal for email verification
@@ -1199,8 +1183,6 @@ const handleOTPVerified = async (verificationData) => {
     const { $api } = useNuxtApp();
     const response = await $api.post('/auth/register', registrationData);
 
-    console.log("Registration response:", response);
-    console.log("Registration response.data:", response.data);
 
     if (response.data.success) {
       successMessage.value = "Registration successful! You can now log in.";

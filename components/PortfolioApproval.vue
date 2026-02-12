@@ -205,7 +205,7 @@ const fetchPendingPortfolios = async () => {
 
     if (response.success) {
       pendingPortfolios.value = response.data;
-      console.log('✅ Pending portfolios fetched successfully:', response.data);
+      
     } else {
       errorMessage.value = response.error || 'Failed to fetch pending portfolios';
       console.error('❌ API error response:', response);

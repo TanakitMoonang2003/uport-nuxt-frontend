@@ -115,7 +115,7 @@ const loadComments = async () => {
   try {
     const data = await getComments(props.portfolioId);
     comments.value = data;
-    console.log('💬 Loaded comments:', data.length);
+
   } catch (error) {
     console.error('Failed to load comments:', error);
   } finally {
@@ -164,7 +164,7 @@ const handleDelete = async (commentId) => {
     if (success) {
       // Remove comment from list
       comments.value = comments.value.filter(c => c.id !== commentId);
-      console.log('✅ Comment removed from list');
+
     }
   } catch (error) {
     console.error('Failed to delete comment:', error);

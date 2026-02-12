@@ -1,7 +1,7 @@
 export const useAuth = () => {
   // Only log in client-side to avoid SSR noise
   if (import.meta.client) {
-    console.log('=== USE AUTH - CREATING/ACCESSING INSTANCE ===');
+   
   }
   
   const { hasConsent } = useCookieConsent()
@@ -64,7 +64,6 @@ export const useAuth = () => {
     
     // Only log in client-side to avoid SSR noise
     if (import.meta.client) {
-      console.log('🔍 Token computed - cookie:', tokenCookie.value, 'localStorage:', getTokenFromStorage(), 'document.cookie:', getTokenFromCookie(), 'final:', currentToken);
     }
     
     return currentToken;
@@ -82,9 +81,9 @@ export const useAuth = () => {
   
   const removeTokenFromStorage = () => {
     if (import.meta.client) {
-      console.log('Removing token from localStorage');
+    
       localStorage.removeItem('auth_token')
-      console.log('Token removed from localStorage');
+    
     }
   }
   
@@ -97,8 +96,7 @@ export const useAuth = () => {
     
     // Only log in client-side
     if (import.meta.client) {
-      console.log('=== USER COMPUTED TRIGGERED ===');
-      console.log('Token value:', token.value);
+     
     }
     
     // Try to get token from cookie first, then localStorage
@@ -111,7 +109,6 @@ export const useAuth = () => {
     if (!currentToken) {
       // Only log in client-side
       if (import.meta.client) {
-        console.log('No token found in cookie or localStorage');
       }
       return null
     }
@@ -119,10 +116,10 @@ export const useAuth = () => {
     try {
       // Decode JWT token to get user info
       const parts = currentToken!.split('.')
-      console.log('Token parts length:', parts.length);
+ 
       
       if (parts.length !== 3) {
-        console.log('Invalid token format');
+ 
         return null
       }
       
@@ -136,17 +133,14 @@ export const useAuth = () => {
       
       // Only log in client-side to avoid SSR noise
       if (import.meta.client) {
-        console.log('=== AUTH ROLE CHECK ===');
-        console.log('Token exists:', !!currentToken);
-        console.log('User data:', userData);
-        console.log('User role:', userData.role);
+     
         
         if (userData.role === 'admin') {
-          console.log('🎯 ADMIN ROLE DETECTED in useAuth');
+       
         } else if (userData.role === 'teacher') {
-          console.log('👨‍🏫 TEACHER ROLE DETECTED in useAuth');
+         
         } else if (userData.role === 'user') {
-          console.log('👤 USER ROLE DETECTED in useAuth');
+          
         }
       }
       
@@ -170,9 +164,7 @@ export const useAuth = () => {
   })
 
   const setToken = (newToken: string) => {
-    console.log('Setting token in useAuth:', newToken);
-    console.log('Cookie consent status:', hasConsent.value);
-    console.log('Cookie consent value:', useCookie('cookie_consent').value);
+  
     
     // Set token in cookie
     tokenCookie.value = newToken
@@ -183,35 +175,32 @@ export const useAuth = () => {
     // Force reactivity update
     forceUpdate.value++
     
-    console.log('Token set, user should be:', user.value);
-    console.log('Force update triggered, value:', forceUpdate.value);
-    console.log('Token value after setting:', token.value);
+
     
     // Verify token is actually stored
-    console.log('Verification - token in cookie:', tokenCookie.value);
-    console.log('Verification - token in localStorage:', getTokenFromStorage());
+
   }
 
   const logout = async () => {
-    console.log('=== LOGOUT INITIATED ===');
+
     
     // Clear token from cookie
     tokenCookie.value = null
-    console.log('Token cookie cleared:', tokenCookie.value);
+
     
     // Clear token from localStorage
     removeTokenFromStorage()
-    console.log('Token removed from localStorage');
+
     
     // Force reactivity update
     forceUpdate.value++
-    console.log('Force update triggered, value:', forceUpdate.value);
+
     
     // Navigate to login page
-    console.log('Navigating to login page...');
+
     try {
       await navigateTo('/auth/login')
-      console.log('✅ Successfully navigated to login page');
+  
     } catch (error) {
       console.error('❌ Error navigating to login page:', error);
       // Fallback: redirect using window.location

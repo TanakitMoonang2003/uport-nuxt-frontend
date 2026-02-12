@@ -82,8 +82,6 @@ const cookieConsent = useCookie('cookie_consent', {
 })
 
 onMounted(() => {
-  console.log('=== COOKIE CONSENT MOUNTED ===');
-  console.log('cookieConsent.value:', cookieConsent.value);
   
   // Check both cookie and localStorage for consent
   let hasConsent = false
@@ -91,7 +89,6 @@ onMounted(() => {
   // Check cookie first
   if (cookieConsent.value && cookieConsent.value !== '' && cookieConsent.value !== 'undefined' && cookieConsent.value !== 'null') {
     hasConsent = true
-    console.log('Cookie consent found in cookie:', cookieConsent.value);
   }
   
   // Check localStorage as backup
@@ -101,25 +98,19 @@ onMounted(() => {
       hasConsent = true
       // Restore cookie from localStorage
       cookieConsent.value = 'accepted'
-      console.log('Cookie consent restored from localStorage');
     }
   }
   
   if (hasConsent) {
-    console.log('User has already given consent - hiding popup');
     showConsent.value = false
   } else {
-    console.log('No cookie consent found - showing popup');
     setTimeout(() => {
       showConsent.value = true
-      console.log('Cookie consent popup should now be visible');
     }, 500) // Small delay for better UX
   }
 })
 
 const acceptCookies = () => {
-  console.log('=== COOKIE CONSENT ACCEPTED ===');
-  console.log('Setting cookie consent to accepted');
   
   // Set cookie consent
   cookieConsent.value = 'accepted'
@@ -127,19 +118,15 @@ const acceptCookies = () => {
   // Also set in localStorage as backup
   if (import.meta.client) {
     localStorage.setItem('cookie_consent', 'accepted')
-    console.log('Cookie consent saved to localStorage');
   }
   
   // Hide popup
   showConsent.value = false
   
-  console.log('Cookie consent set to:', cookieConsent.value);
-  console.log('Popup hidden:', showConsent.value);
   
   // Emit event so other components know consent was given
   if (import.meta.client) {
     window.dispatchEvent(new CustomEvent('cookie-consent', { detail: 'accepted' }))
-    console.log('Cookie consent event dispatched');
   }
   
   // Force page refresh to ensure state is properly updated
@@ -151,14 +138,12 @@ const acceptCookies = () => {
 }
 
 const declineCookies = () => {
-  console.log('=== COOKIE CONSENT DECLINED ===');
   
   cookieConsent.value = 'declined'
   
   // Also set in localStorage as backup
   if (import.meta.client) {
     localStorage.setItem('cookie_consent', 'declined')
-    console.log('Cookie consent declined saved to localStorage');
   }
   
   showConsent.value = false

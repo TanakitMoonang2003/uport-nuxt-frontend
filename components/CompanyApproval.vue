@@ -172,7 +172,6 @@ const fetchPendingCompanies = async () => {
   errorMessage.value = '';
   
   try {
-    console.log('🔍 Fetching company approvals with token:', token.value);
     
     const response = await $fetch('/api/company-approvals', {
       method: 'GET',
@@ -185,7 +184,7 @@ const fetchPendingCompanies = async () => {
 
     if (response.success) {
       pendingCompanies.value = response.data;
-      console.log('✅ Company approvals fetched successfully:', response.data);
+
     } else {
       errorMessage.value = response.error || 'ไม่สามารถดึงข้อมูลบริษัทได้';
       console.error('❌ API error response:', response);
@@ -210,7 +209,6 @@ const approveCompany = async (companyId, action) => {
   successMessage.value = '';
   
   try {
-    console.log('🔍 Processing company approval:', { companyId, action });
     
     const response = await $fetch('/api/company-approvals', {
       method: 'POST',
@@ -235,7 +233,6 @@ const approveCompany = async (companyId, action) => {
         successMessage.value = '';
       }, 3000);
       
-      console.log('✅ Company approval processed successfully:', response.message);
     } else {
       errorMessage.value = response.error || 'ไม่สามารถดำเนินการได้';
       console.error('❌ API error response:', response);

@@ -13,7 +13,7 @@ export default defineNuxtPlugin(() => {
   // ✅ Ensure the base URL always points to the /api prefix
   const finalBaseURL = cleanBaseURL.endsWith('/api') ? cleanBaseURL : `${cleanBaseURL}/api`;
 
-  console.log('🔧 API Base URL:', finalBaseURL);
+
 
   const api = axios.create({
     baseURL: finalBaseURL,
@@ -22,22 +22,15 @@ export default defineNuxtPlugin(() => {
 
   // ใช้ InternalAxiosRequestConfig แทน
   api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    console.log('🔍 Axios Request Interceptor Triggered!');
-    console.log('🔍 Method:', config.method?.toUpperCase());
-    console.log('🔍 URL:', config.url);
-    console.log('🔍 BaseURL:', config.baseURL);
-    console.log('🔍 Full URL:', `${config.baseURL}${config.url}`);
-    console.log('🔍 Headers:', config.headers);
-    console.log('🔍 Data:', config.data);
 
     const token = useCookie("token").value;
     if (token) {
       // ตรวจว่ามี headers ก่อน
       config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('🔍 Added Authorization header');
+   
     } else {
-      console.log('🔍 No token found');
+
     }
     return config;
   });
@@ -45,7 +38,6 @@ export default defineNuxtPlugin(() => {
   // Add response interceptor for debugging
   api.interceptors.response.use(
     (response) => {
-      console.log('✅ Axios Response:', response.status, response.data);
       return response;
     },
     (error) => {

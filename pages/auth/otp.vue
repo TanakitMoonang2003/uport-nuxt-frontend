@@ -224,7 +224,6 @@ const handleVerify = async () => {
 
   try {
     const otpCode = otp.value.join("");
-    console.log("Verifying OTP:", otpCode);
     
     const { $api } = useNuxtApp();
     const response = await $api.post('/auth/verify-otp', {
@@ -233,7 +232,7 @@ const handleVerify = async () => {
     });
 
     if (response.success) {
-      console.log("OTP verified successfully");
+
       // Redirect to login page
       await navigateTo('/auth/login');
     } else {
@@ -253,7 +252,7 @@ const resendOTP = async () => {
   isResending.value = true;
 
   try {
-    console.log("Resending OTP to:", email.value);
+
     
     const { $api } = useNuxtApp();
     const response = await $api.post('/auth/send-otp', {

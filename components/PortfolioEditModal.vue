@@ -252,7 +252,7 @@ const handleSubmit = async () => {
       features: features.length > 0 ? features : ['Portfolio Item']
     };
 
-    console.log('Updating portfolio with data:', updateData);
+
 
     // Call update API
     await updatePortfolioItem(props.portfolio.id, updateData);

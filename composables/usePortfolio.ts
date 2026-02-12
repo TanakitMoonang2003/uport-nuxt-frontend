@@ -34,13 +34,7 @@ export const usePortfolio = () => {
       const { $api } = useNuxtApp();
       const response = await $api.get(`/portfolio/${id}`);
 
-      console.log('📡 Portfolio Detail API Response:', {
-        success: response.data?.success,
-        responseDataType: typeof response.data,
-        responseDataKeys: response.data ? Object.keys(response.data) : [],
-        dataType: typeof response.data?.data,
-        fullResponse: response
-      });
+   
 
       // Axios: actual payload อยู่ที่ response.data
       if (response.data?.success && response.data.data) {
@@ -48,10 +42,7 @@ export const usePortfolio = () => {
 
         // ถ้าไม่ได้ approved ให้ return null เพื่อให้หน้าแสดง Not Found
         if (item.status !== 'approved') {
-          console.log('📡 Portfolio item is not approved, hiding from detail page:', {
-            id,
-            status: item.status
-          });
+         
           return null;
         }
 
@@ -72,19 +63,12 @@ export const usePortfolio = () => {
         ? '/portfolio'
         : `/portfolio?category=${category}`;
 
-      console.log('📡 Fetching portfolios from:', url);
+
 
       const { $api } = useNuxtApp();
       const response = await $api.get(url);
 
-      console.log('📡 Portfolio API Response:', {
-        success: response.data?.success,
-        responseDataType: typeof response.data,
-        responseDataKeys: response.data ? Object.keys(response.data) : [],
-        dataType: typeof response.data?.data,
-        dataLength: Array.isArray(response.data?.data) ? response.data.data.length : 'not array',
-        fullResponse: response
-      });
+  
 
       // Handle different response structures
       // Axios wraps the response, so actual data is in response.data
@@ -100,9 +84,6 @@ export const usePortfolio = () => {
 
       // Filter only approved portfolios (double check)
       portfolios = portfolios.filter((p: any) => p.status === 'approved');
-
-      console.log('📡 Filtered approved portfolios:', portfolios.length);
-      console.log('📡 Portfolio statuses:', portfolios.map((p: any) => ({ id: p.id, status: p.status, category: p.category })));
 
       return portfolios;
     } catch (error) {
@@ -129,10 +110,7 @@ export const usePortfolio = () => {
       const { $api } = useNuxtApp();
       const response = await $api.put(`/portfolio/${id}`, portfolioData);
 
-      console.log('📝 Portfolio Update API Response:', {
-        success: response.data?.success,
-        data: response.data?.data
-      });
+   
 
       if (response.data?.success && response.data.data) {
         return response.data.data;

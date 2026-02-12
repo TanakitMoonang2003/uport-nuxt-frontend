@@ -78,10 +78,6 @@ export const useUser = () => {
 
   // Logout user - Note: Use useAuth().logout() instead for full logout functionality
   const logout = () => {
-    console.log('=== USEUSER LOGOUT CALLED ===');
-    console.log('⚠️ WARNING: This logout function should not be used directly.');
-    console.log('⚠️ Use useAuth().logout() instead for proper logout functionality.');
-
     const token = useCookie('token');
     token.value = null;
     navigateTo('/auth/login');

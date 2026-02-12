@@ -183,14 +183,10 @@ const { hasConsent } = useCookieConsent();
 const { setToken, forceUpdate, token, isAuthenticated, user } = useAuth();
 
 // Debug auth instance
-console.log('=== LOGIN AUTH INSTANCE ===');
-console.log('Token value in login:', token.value);
-console.log('Force update value in login:', forceUpdate.value);
+
 
 const handleSubmit = async () => {
-  console.log("=== LOGIN ATTEMPT ===");
-  console.log("Email:", email.value);
-  console.log("Password length:", password.value?.length);
+
   
   if (!email.value || !password.value) {
     errorMessage.value = 'Please fill in all fields';
@@ -212,80 +208,45 @@ const handleSubmit = async () => {
       password: password.value
     });
 
-    console.log("Login response:", response);
-    console.log("Login response.data:", response.data);
-    console.log("Response success check:", response.data?.success);
-    console.log("Response data type:", typeof response.data);
+
 
     if (response.data.success) {
-      console.log('=== COOKIE CONSENT CHECK ===');
-      console.log('hasConsent.value:', hasConsent.value);
+   
       
-      // Check if user has given cookie consent
-      console.log('=== COOKIE CONSENT DETAILED CHECK ===');
-      console.log('hasConsent.value:', hasConsent.value);
-      console.log('Cookie consent cookie value:', useCookie('cookie_consent').value);
+    
       
       if (!hasConsent.value) {
-        console.log('❌ No cookie consent - cannot store token');
-        console.log('⚠️ TEMPORARY BYPASS FOR TESTING - storing token anyway');
-        // errorMessage.value = 'Please accept cookies to stay logged in. Check the cookie notice at the bottom of the page.';
-        // return;
+       
+        console.warn('⚠️ User has not given cookie consent. Token will not be stored in cookies or localStorage.');
       } else {
-        console.log('✅ Cookie consent given - proceeding with token storage');
+        console.log('✅ User has given cookie consent. Token will be stored in cookies and localStorage.');
       }
 
-      // Store token using the setToken method from useAuth
-      console.log('=== TOKEN STORAGE ===');
-      console.log('Using setToken method from useAuth...');
-      
-      console.log('Token before setting:', response.data.token);
-      console.log('Full response.data structure:', JSON.stringify(response.data, null, 2));
-      console.log('response.data.data:', response.data.data);
-      console.log('response.data.data.token:', response.data.data?.token);
+    
       
       // Try to get token from nested data structure
       const tokenToStore = response.data.data?.token || response.data.token;
-      console.log('Token to store:', tokenToStore);
+
       
       setToken(tokenToStore);
-      console.log('Token set successfully via useAuth');
-      console.log('Force update value after setToken:', forceUpdate.value);
-      console.log('Token value after setToken:', token.value);
+   
       
       // Wait a moment for reactivity to update
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Check auth state after setting token
-      console.log('=== AUTH STATE CHECK AFTER LOGIN ===');
-      console.log('isAuthenticated:', isAuthenticated.value);
-      console.log('user:', user.value);
-      console.log('token:', token.value);
-      console.log('Is authenticated after setToken:', !!token.value);
+     
       
       // Verify token is stored in cookie and localStorage
       const cookieToken = useCookie('token');
-      console.log('Token in cookie after setToken:', cookieToken.value);
-      console.log('Token in localStorage after setToken:', localStorage.getItem('auth_token'));
-      console.log('localStorage keys after setToken:', Object.keys(localStorage));
-      
-      console.log('=== LOGIN SUCCESS ===');
-      console.log('Full response:', response);
-      console.log('Response data:', response.data);
-      console.log('Token stored:', response.data.token);
-      console.log('User role from response:', response.data.role);
+     
+     
       
       // Decode JWT token to check role
       try {
         const tokenParts = response.data.token.split('.');
         if (tokenParts.length === 3) {
           const payload = JSON.parse(atob(tokenParts[1]));
-          console.log('=== USER ROLE INFO ===');
-          console.log('User ID:', payload.userId);
-          console.log('Username:', payload.username);
-          console.log('Email:', payload.email);
-          console.log('Role:', payload.role);
-          console.log('Token expires:', new Date(payload.exp * 1000));
+          
           
           // Log role-specific information
           if (payload.role === 'admin') {
@@ -306,7 +267,7 @@ const handleSubmit = async () => {
       errorMessage.value = '';
       
       // Redirect to dashboard page
-      console.log('Redirecting to dashboard...');
+  
       
       // Add small delay to ensure reactivity updates
       await new Promise(resolve => setTimeout(resolve, 100));

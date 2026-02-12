@@ -6,11 +6,6 @@ export const useComments = () => {
         try {
             const response = await $api.get(`/comments?portfolioId=${portfolioId}`);
 
-            console.log('💬 Comments API Response:', {
-                success: response.data?.success,
-                count: response.data?.data?.length
-            });
-
             if (response.data?.success && response.data.data) {
                 return response.data.data;
             }
@@ -30,8 +25,7 @@ export const useComments = () => {
                 content: content.trim()
             });
 
-            console.log('✅ Comment created:', response.data);
-
+          
             if (response.data?.success && response.data.data) {
                 return response.data.data;
             }
@@ -48,8 +42,7 @@ export const useComments = () => {
         try {
             const response = await $api.delete(`/comments/${commentId}`);
 
-            console.log('🗑️ Comment deleted:', commentId);
-
+           
             return response.data?.success || false;
         } catch (error) {
             console.error('Error deleting comment:', error);
