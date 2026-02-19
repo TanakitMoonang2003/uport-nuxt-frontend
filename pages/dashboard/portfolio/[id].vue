@@ -44,7 +44,7 @@
             </span>
           </div>
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{{ portfolioItem.title }}</h1>
-          <p class="text-lg md:text-xl text-gray-300 mb-6">{{ portfolioItem.description }}</p>
+          <p class="text-lg md:text-xl text-gray-300 mb-6">{{ portfolioItem.fullDescription || portfolioItem.description }}</p>
         </div>
       </div>
     </div>
@@ -158,18 +158,54 @@
             </div>
           </div>
 
-          <!-- Technologies Card -->
+          <!-- Owner Info Card -->
           <div class="bg-white rounded-2xl shadow-xl p-4 md:p-6">
-            <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-4">Technologies Used</h3>
-            <div class="flex flex-wrap gap-2">
-              <span 
-                v-for="tech in portfolioItem.technologies" 
-                :key="tech"
-                class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-medium"
-              >
-                {{ tech }}
-              </span>
+            <h3 class="text-lg md:text-xl font-bold text-gray-800 mb-4">เจ้าของผลงาน</h3>
+            <div v-if="ownerProfile" class="flex flex-col gap-3">
+              <!-- Avatar + Name -->
+              <div class="flex items-center gap-3">
+                <img
+                  v-if="ownerProfile.avatarUrl"
+                  :src="ownerProfile.avatarUrl"
+                  class="w-12 h-12 rounded-full object-cover border-2 border-yellow-400"
+                  @error="(e) => e.target.style.display='none'"
+                />
+                <div v-else class="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center text-gray-900 font-bold text-lg">
+                  {{ (ownerProfile.firstName?.[0] || ownerProfile.username?.[0] || '?').toUpperCase() }}
+                </div>
+                <div>
+                  <p class="font-semibold text-gray-800">
+                    {{ ownerProfile.firstName && ownerProfile.lastName ? `${ownerProfile.firstName} ${ownerProfile.lastName}` : ownerProfile.username }}
+                  </p>
+                  <p class="text-xs text-gray-500 capitalize">{{ ownerProfile.role }}</p>
+                </div>
+              </div>
+              <!-- Details -->
+              <div class="space-y-1 text-sm text-gray-600">
+                <p v-if="ownerProfile.department"><span class="font-medium text-gray-700">สาขา:</span> {{ ownerProfile.department }}</p>
+                <p v-if="ownerProfile.yearOfStudy"><span class="font-medium text-gray-700">ชั้นปี:</span> {{ ownerProfile.yearOfStudy }}</p>
+                <p v-if="ownerProfile.studentId"><span class="font-medium text-gray-700">รหัสนักศึกษา:</span> {{ ownerProfile.studentId }}</p>
+              </div>
+              <!-- Skills -->
+              <div v-if="ownerProfile.skills?.length" class="flex flex-wrap gap-1 pt-1">
+                <span
+                  v-for="skill in ownerProfile.skills"
+                  :key="skill"
+                  class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full font-medium"
+                >{{ skill }}</span>
+              </div>
+              <!-- Profile link -->
+              <NuxtLink
+                :to="`/profile/${encodeURIComponent(portfolioItem.submittedBy)}`"
+                class="mt-1 text-sm text-blue-600 hover:text-blue-800 underline"
+              >ดูโปรไฟล์ทั้งหมด →</NuxtLink>
             </div>
+            <!-- Loading owner -->
+            <div v-else-if="ownerLoading" class="flex items-center gap-2 text-gray-400 text-sm">
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-500"></div>
+              กำลังโหลด...
+            </div>
+            <div v-else class="text-sm text-gray-400">ไม่พบข้อมูลเจ้าของผลงาน</div>
           </div>
         </div>
       </div>
@@ -241,12 +277,15 @@ import { ref, onMounted, computed } from 'vue';
 const route = useRoute();
 const { getPortfolioItemById } = usePortfolio();
 const { user } = useAuth();
+const { getPublicUserProfile } = useUser();
 
 const id = route.params.id;
 const portfolioItem = ref(null);
 const loading = ref(true);
 const showEditModal = ref(false);
 const currentSlide = ref(0);
+const ownerProfile = ref(null);
+const ownerLoading = ref(false);
 
 // Collect all images from images[] array or fall back to single image field
 const allImages = computed(() => {
@@ -285,11 +324,21 @@ onMounted(async () => {
 const loadPortfolioItem = async () => {
   loading.value = true;
   try {
-
-    
     const item = await getPortfolioItemById(id);
     portfolioItem.value = item;
     currentSlide.value = 0;
+
+    // Load owner profile
+    if (item?.submittedBy) {
+      ownerLoading.value = true;
+      try {
+        ownerProfile.value = await getPublicUserProfile(item.submittedBy);
+      } catch {
+        ownerProfile.value = null;
+      } finally {
+        ownerLoading.value = false;
+      }
+    }
 
 
     // Set page title
