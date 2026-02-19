@@ -147,6 +147,7 @@ export const useUser = () => {
 
   // Get current user data
   const user = computed(() => {
+    if (!import.meta.client) return null;
     const token = useCookie('token')?.value;
     if (!token) return null;
 
@@ -155,7 +156,10 @@ export const useUser = () => {
       const parts = token.split('.');
       if (parts.length !== 3) return null;
 
-      const payload = JSON.parse(atob(parts[1]));
+      // Handle URL-safe base64 (JWT uses - and _ instead of + and /)
+      const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, '=');
+      const payload = JSON.parse(atob(padded));
       return {
         id: payload.userId || null,
         email: payload.email || '',

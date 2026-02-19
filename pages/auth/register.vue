@@ -1104,12 +1104,12 @@ const handleSubmit = async () => {
           pendingEmail.value = data.email;
           showOTPModal.value = true;
         } else {
+          console.error("OTP Backend Error:", otpResponse.error);
+          console.error("OTP Backend ErrorDetails:", otpResponse.errorDetails);
           throw new Error(otpResponse.error || "Failed to send verification code");
         }
       } catch (otpError) {
         console.error("OTP Request Error:", otpError);
-        console.error("OTP Error Details:", otpError.response?.data);
-        console.error("OTP Error Status:", otpError.response?.status);
         throw otpError;
       }
     }

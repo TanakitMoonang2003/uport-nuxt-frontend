@@ -243,20 +243,24 @@ const handleSubmit = async () => {
       
       // Decode JWT token to check role
       try {
-        const tokenParts = response.data.token.split('.');
-        if (tokenParts.length === 3) {
-          const payload = JSON.parse(atob(tokenParts[1]));
-          
-          
-          // Log role-specific information
-          if (payload.role === 'admin') {
-            console.log('🎯 ADMIN USER DETECTED - Full access granted');
-          } else if (payload.role === 'teacher') {
-            console.log('👨‍🏫 TEACHER USER DETECTED - Teacher access granted');
-          } else if (payload.role === 'user') {
-            console.log('👤 REGULAR USER DETECTED - Standard access granted');
-          } else {
-            console.log('❓ UNKNOWN ROLE:', payload.role);
+        const rawToken = response.data.data?.token || response.data.token;
+        if (rawToken && typeof rawToken === 'string') {
+          const tokenParts = rawToken.split('.');
+          if (tokenParts.length === 3) {
+            const base64 = tokenParts[1].replace(/-/g, '+').replace(/_/g, '/');
+            const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, '=');
+            const payload = JSON.parse(atob(padded));
+            
+            // Log role-specific information
+            if (payload.role === 'admin') {
+              console.log('🎯 ADMIN USER DETECTED - Full access granted');
+            } else if (payload.role === 'teacher') {
+              console.log('👨‍🏫 TEACHER USER DETECTED - Teacher access granted');
+            } else if (payload.role === 'user') {
+              console.log('👤 REGULAR USER DETECTED - Standard access granted');
+            } else {
+              console.log('❓ UNKNOWN ROLE:', payload.role);
+            }
           }
         }
       } catch (error) {
