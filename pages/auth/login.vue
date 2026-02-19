@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen flex">
+  <div class="min-h-screen flex flex-col md:flex-row">
     <!-- Left Side - Dark Section -->
     <div
-      class="w-1/2 bg-gradient-to-br from-amber-900 via-yellow-900 to-amber-950 flex items-center justify-center p-12"
+      class="w-full md:w-1/2 bg-gradient-to-br from-amber-900 via-yellow-900 to-amber-950 flex items-center justify-center p-8 md:p-12 order-2 md:order-1"
     >
-      <div class="text-white">
-        <h1 class="text-6xl font-bold mb-6">UPORT</h1>
-        <p class="text-xl text-amber-100 leading-relaxed">
+      <div class="text-white text-center md:text-left">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6">UPORT</h1>
+        <p class="text-lg md:text-xl text-amber-100 leading-relaxed">
           Showcase your portfolio, experience, and skills<br />
           all in one place to apply for jobs or internships with confidence.
         </p>
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Right Side - Login Form -->
-    <div class="w-1/2 bg-white flex items-center justify-center p-12">
+    <div class="w-full md:w-1/2 bg-white flex items-center justify-center p-8 md:p-12 order-1 md:order-2">
       <div class="w-full max-w-md">
         <!-- Logo -->
         <div class="flex items-center justify-center mb-12">

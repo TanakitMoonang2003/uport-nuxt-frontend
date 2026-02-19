@@ -159,7 +159,7 @@
         <!-- Notification Dropdown -->
         <div 
           v-if="showNotifications && isAuthenticated && (user?.role === 'admin' || user?.role === 'teacher')"
-          class="absolute right-4 top-20 w-96 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border border-amber-100 z-50 transform transition-all duration-300 scale-100"
+          class="absolute right-4 top-20 w-80 sm:w-96 bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border border-amber-100 z-50 transform transition-all duration-300 scale-100 max-h-[80vh] overflow-hidden"
         >
           <div class="p-6 border-b border-amber-100 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-t-2xl">
             <div class="flex items-center justify-between">
@@ -176,17 +176,17 @@
             <div 
               v-for="(teacher, index) in pendingTeachers" 
               :key="teacher._id"
-              class="p-5 hover:bg-gradient-to-r hover:from-amber-50 hover:to-yellow-50 border-b border-amber-100 transition-all duration-300 group"
+              class="p-3 sm:p-5 hover:bg-gradient-to-r hover:from-amber-50 hover:to-yellow-50 border-b border-amber-100 transition-all duration-300 group"
             >
-              <div class="flex items-center justify-between">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="flex items-center">
-                  <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
-                  <div class="ml-4">
-                    <p class="text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors duration-300">
+                  <div class="ml-3 sm:ml-4">
+                    <p class="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors duration-300">
                       Teacher Request - {{ teacher.firstName }} {{ teacher.lastName }}
                     </p>
                     <p class="text-xs text-gray-500 flex items-center mt-1">
@@ -197,16 +197,16 @@
                     </p>
                   </div>
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2 sm:space-x-3">
                   <button
                     @click="showNotificationModal('teachers')"
-                    class="text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+                    class="text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
                   >
                     View Details
                   </button>
                   <button
                     @click="cancelNotification('teachers')"
-                    class="text-xs bg-gradient-to-r from-gray-400 to-gray-500 text-white px-3 py-2 rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all duration-300 shadow-md hover:shadow-lg"
+                    class="text-xs bg-gradient-to-r from-gray-400 to-gray-500 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all duration-300 shadow-md hover:shadow-lg"
                   >
                     Dismiss
                   </button>
@@ -218,17 +218,17 @@
             <div 
               v-for="(company, index) in pendingCompanies" 
               :key="company._id"
-              class="p-5 hover:bg-gradient-to-r hover:from-amber-50 hover:to-yellow-50 border-b border-amber-100 transition-all duration-300 group"
+              class="p-3 sm:p-5 md:p-5 hover:bg-gradient-to-r hover:from-amber-50 hover:to-yellow-50 border-b border-amber-100 transition-all duration-300 group"
             >
-              <div class="flex items-center justify-between">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="flex items-center">
-                  <div class="h-12 w-12 rounded-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
-                  <div class="ml-4">
-                    <p class="text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors duration-300">
+                  <div class="ml-3 sm:ml-4">
+                    <p class="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors duration-300">
                       Company Request - {{ company.companyName }}
                     </p>
                     <p class="text-xs text-gray-500 flex items-center mt-1">
@@ -239,16 +239,16 @@
                     </p>
                   </div>
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2 sm:space-x-3">
                   <button
                     @click="showNotificationModal('companies')"
-                    class="text-xs bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+                    class="text-xs bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
                   >
                     View Details
                   </button>
                   <button
                     @click="cancelNotification('companies')"
-                    class="text-xs bg-gradient-to-r from-gray-400 to-gray-500 text-white px-3 py-2 rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all duration-300 shadow-md hover:shadow-lg"
+                    class="text-xs bg-gradient-to-r from-gray-400 to-gray-500 text-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all duration-300 shadow-md hover:shadow-lg"
                   >
                     Dismiss
                   </button>
@@ -259,17 +259,17 @@
             <!-- Individual Portfolio Requests -->
             <div 
               v-if="pendingPortfoliosCount > 0"
-              class="p-5 hover:bg-gradient-to-r hover:from-amber-50 hover:to-yellow-50 border-b border-amber-100 transition-all duration-300 group"
+              class="p-3 sm:p-5 md:p-5 hover:bg-gradient-to-r hover:from-amber-50 hover:to-yellow-50 border-b border-amber-100 transition-all duration-300 group"
             >
-              <div class="flex items-center justify-between">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="flex items-center">
-                  <div class="h-12 w-12 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                   </div>
-                  <div class="ml-4">
-                    <p class="text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors duration-300">
+                  <div class="ml-3 sm:ml-4">
+                    <p class="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-amber-700 transition-colors duration-300">
                       Portfolio Requests - {{ pendingPortfoliosCount }} pending
                     </p>
                     <p class="text-xs text-gray-500 flex items-center mt-1">
@@ -280,10 +280,10 @@
                     </p>
                   </div>
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2 sm:space-x-3">
                   <NuxtLink
                     to="/dashboard/portfolio-approval"
-                    class="text-xs bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+                    class="text-xs bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
                     @click="showNotifications = false"
                   >
                     View Details
