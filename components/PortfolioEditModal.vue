@@ -144,16 +144,6 @@
           </div>
         </div>
 
-        <!-- Error Message -->
-        <div v-if="errorMessage" class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
-          <p class="text-sm text-red-800">{{ errorMessage }}</p>
-        </div>
-
-        <!-- Success Message -->
-        <div v-if="successMessage" class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg">
-          <p class="text-sm text-green-800">{{ successMessage }}</p>
-        </div>
-
         <!-- Action Buttons -->
         <div class="flex gap-4 pt-4">
           <button
@@ -186,6 +176,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useToast } from '~/composables/useToast';
 
 const props = defineProps({
   portfolio: {
@@ -199,8 +190,7 @@ const emit = defineEmits(['close', 'updated']);
 const { updatePortfolioItem } = usePortfolio();
 
 const isLoading = ref(false);
-const errorMessage = ref('');
-const successMessage = ref('');
+const { success: toastSuccess, error: toastError } = useToast();
 
 // Form data
 const formData = ref({
@@ -229,8 +219,6 @@ const featuresInput = ref(
 );
 
 const handleSubmit = async () => {
-  errorMessage.value = '';
-  successMessage.value = '';
   isLoading.value = true;
 
   try {
@@ -257,17 +245,13 @@ const handleSubmit = async () => {
     // Call update API
     await updatePortfolioItem(props.portfolio.id, updateData);
 
-    successMessage.value = 'Portfolio updated successfully!';
-    
-    // Wait a moment to show success message
-    setTimeout(() => {
-      emit('updated');
-      emit('close');
-    }, 1000);
+    toastSuccess('Portfolio updated successfully!');
+    emit('updated');
+    emit('close');
 
   } catch (error) {
     console.error('Error updating portfolio:', error);
-    errorMessage.value = error.response?.data?.error || 'Failed to update portfolio. Please try again.';
+    toastError(error.response?.data?.error || 'Failed to update portfolio. Please try again.');
   } finally {
     isLoading.value = false;
   }

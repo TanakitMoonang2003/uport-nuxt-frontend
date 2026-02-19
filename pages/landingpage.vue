@@ -188,7 +188,7 @@
                 <span class="ml-3 text-xl font-bold">UPORT</span>
               </div>
               <p class="text-gray-400 text-sm">
-                แพลตฟอร์มจัดการผลงานสำหรับนักศึกษาวิศวกรรมซอฟต์แวร์ CMTC
+                แพลตฟอร์มจัดการผลงานสำหรับเทคโนโลยีสารสนเทศCMTC
               </p>
             </div>
             
@@ -239,10 +239,10 @@ const mobileMenuOpen = ref(false)
 // Removed i18n functionality
   
   const stats = [
-    { label: 'Students', count: '500+' },
-    { label: 'Portfolios', count: '1,200+' },
-    { label: 'Teachers', count: '50+' },
-    { label: 'Companies', count: '100+' }
+    { label: 'Students', count: '20+' },
+    { label: 'Portfolios', count: '15+' },
+    { label: 'Teachers', count: '2+' },
+    { label: 'Companies', count: '1+' }
   ]
   
   const features = [

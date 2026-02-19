@@ -191,7 +191,7 @@ const loadUserProfile = async () => {
         name: `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || profile.username,
         title: profile.userType === 'student' ? 'Student' : 'Teacher',
         bio: profile.bio || `Passionate ${profile.userType} with experience in modern technologies.`,
-        avatar: profile.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
+        avatar: profile.avatarUrl || profile.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
         email: profile.email,
         phone: profile.phone || 'Not provided',
         location: profile.location || 'Not specified',

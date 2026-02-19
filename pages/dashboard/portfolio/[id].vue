@@ -34,7 +34,13 @@
             </span>
             <!-- Debug info -->
             <span v-if="user" class="text-xs bg-blue-500 px-2 py-1 rounded w-fit">
-            Portfolio: {{ portfolioItem.submittedBy }}
+            Portfolio: 
+            <NuxtLink 
+              :to="`/profile/${encodeURIComponent(portfolioItem.submittedBy)}`"
+              class="text-white hover:text-yellow-300 underline"
+            >
+              {{ portfolioItem.submittedBy }}
+            </NuxtLink>
             </span>
           </div>
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{{ portfolioItem.title }}</h1>
@@ -54,13 +60,54 @@
     <!-- Main Content -->
     <div v-else-if="portfolioItem" class="container mx-auto px-4 py-8 md:py-12">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-        <!-- Project Image -->
+        <!-- Project Image / Slider -->
         <div class="lg:col-span-2 order-1 lg:order-1">
           <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <img 
-              :src="getPortfolioImage(portfolioItem)" 
-              :alt="portfolioItem.title"
-              class="w-full h-48 sm:h-64 md:h-80 object-cover"
+            <div class="relative">
+              <img
+                :src="allImages[currentSlide] || getPortfolioImage(portfolioItem)"
+                :alt="portfolioItem.title"
+                class="w-full h-48 sm:h-64 md:h-80 object-cover transition-opacity duration-300"
+                @error="handleImageError"
+              />
+              <!-- Prev / Next arrows: only when multiple images -->
+              <template v-if="allImages.length > 1">
+                <button
+                  @click="prevSlide"
+                  class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <button
+                  @click="nextSlide"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </button>
+                <!-- Dots -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  <button
+                    v-for="(_, i) in allImages"
+                    :key="i"
+                    @click="currentSlide = i"
+                    class="w-2 h-2 rounded-full transition-colors"
+                    :class="i === currentSlide ? 'bg-white' : 'bg-white/50'"
+                  />
+                </div>
+                <!-- Counter -->
+                <span class="absolute top-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">{{ currentSlide + 1 }} / {{ allImages.length }}</span>
+              </template>
+            </div>
+          </div>
+          <!-- Thumbnail strip: only when multiple images -->
+          <div v-if="allImages.length > 1" class="flex gap-2 mt-3 overflow-x-auto pb-1">
+            <img
+              v-for="(img, i) in allImages"
+              :key="i"
+              :src="img"
+              @click="currentSlide = i"
+              class="w-16 h-16 object-cover rounded-lg cursor-pointer flex-shrink-0 border-2 transition-colors"
+              :class="i === currentSlide ? 'border-yellow-500' : 'border-transparent hover:border-yellow-300'"
               @error="handleImageError"
             />
           </div>
@@ -81,9 +128,12 @@
                 <p class="text-gray-800">{{ portfolioItem.client }}</p>
               </div>
               <div class="flex flex-col sm:flex-row sm:space-x-3 sm:space-y-0 space-y-3 pt-4">
-                <a 
-                  :href="portfolioItem.demoUrl" 
+                <!-- Live Demo: only show when demoUrl exists -->
+                <a
+                  v-if="portfolioItem.demoUrl"
+                  :href="portfolioItem.demoUrl"
                   target="_blank"
+                  rel="noopener noreferrer"
                   class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
                 >
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,9 +141,12 @@
                   </svg>
                   Live Demo
                 </a>
-                <a 
-                  :href="portfolioItem.githubUrl" 
+                <!-- GitHub: only show when githubUrl exists -->
+                <a
+                  v-if="portfolioItem.githubUrl"
+                  :href="portfolioItem.githubUrl"
                   target="_blank"
+                  rel="noopener noreferrer"
                   class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors flex items-center justify-center"
                 >
                   <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -193,6 +246,23 @@ const id = route.params.id;
 const portfolioItem = ref(null);
 const loading = ref(true);
 const showEditModal = ref(false);
+const currentSlide = ref(0);
+
+// Collect all images from images[] array or fall back to single image field
+const allImages = computed(() => {
+  if (!portfolioItem.value) return [];
+  const imgs = portfolioItem.value.images;
+  if (Array.isArray(imgs) && imgs.length > 0) return imgs;
+  const single = getPortfolioImage(portfolioItem.value);
+  return single ? [single] : [];
+});
+
+const prevSlide = () => {
+  currentSlide.value = (currentSlide.value - 1 + allImages.value.length) % allImages.value.length;
+};
+const nextSlide = () => {
+  currentSlide.value = (currentSlide.value + 1) % allImages.value.length;
+};
 
 // Check if current user owns this portfolio
 const isOwner = computed(() => {
@@ -219,7 +289,8 @@ const loadPortfolioItem = async () => {
     
     const item = await getPortfolioItemById(id);
     portfolioItem.value = item;
- 
+    currentSlide.value = 0;
+
 
     // Set page title
     if (item) {

@@ -97,7 +97,7 @@ export const usePortfolio = () => {
     try {
       const { $api } = useNuxtApp();
       const response = await $api.post('/portfolio', portfolioData);
-      return response.success ? response.data : null;
+      return response.data?.success ? response.data.data : null;
     } catch (error) {
       console.error('Error creating portfolio item:', error);
       throw error;
@@ -123,10 +123,37 @@ export const usePortfolio = () => {
     }
   };
 
+  // Get portfolio items by user email
+  const getPortfolioByUser = async (email: string) => {
+    try {
+      const { $api } = useNuxtApp();
+      const response = await $api.get(`/portfolio?user=${encodeURIComponent(email)}`);
+
+      // Handle different response structures
+      let portfolios = [];
+      if (response.data?.success && Array.isArray(response.data.data)) {
+        portfolios = response.data.data;
+      } else if (Array.isArray(response.data)) {
+        portfolios = response.data;
+      } else if (Array.isArray(response.data?.data)) {
+        portfolios = response.data.data;
+      }
+
+      // Filter only approved portfolios
+      portfolios = portfolios.filter((p: any) => p.status === 'approved');
+
+      return portfolios;
+    } catch (error) {
+      console.error('Error fetching portfolio items by user:', error);
+      return [];
+    }
+  };
+
   return {
     getAllPortfolioItems,
     getPortfolioItemById,
     getPortfolioItemsByCategory,
+    getPortfolioByUser,
     createPortfolioItem,
     updatePortfolioItem
   };

@@ -22,6 +22,24 @@ export const useUser = () => {
     }
   };
 
+  // Get public user profile by email
+  const getPublicUserProfile = async (email: string) => {
+    try {
+      const { $api } = useNuxtApp();
+      const response = await $api.get(`/user/profile/${encodeURIComponent(email)}`);
+
+      // Backend returns { success, data }
+      if (response.data?.success && response.data.data) {
+        return response.data.data;
+      }
+
+      return response.data || response;
+    } catch (error) {
+      console.error('Error fetching public user profile:', error);
+      throw error;
+    }
+  };
+
   // Update user profile
   const updateUserProfile = async (profileData: any) => {
     try {
@@ -70,6 +88,50 @@ export const useUser = () => {
     }
   };
 
+  // Upload portfolio file
+  const uploadPortfolioFile = async (file: File) => {
+    try {
+      const token = useCookie('token')?.value;
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', file.type === 'application/pdf' ? 'pdf' : 'image');
+
+      const { $api } = useNuxtApp();
+      const response = await $api.post('/user/profile/portfolio', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return response.data || response;
+    } catch (error) {
+      console.error('Error uploading portfolio file:', error);
+      throw error;
+    }
+  };
+
+  // Remove portfolio file
+  const removePortfolioFile = async (fileId: string) => {
+    try {
+      const token = useCookie('token')?.value;
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const { $api } = useNuxtApp();
+      const response = await $api.delete(`/user/profile/portfolio/${fileId}`);
+
+      return response.data || response;
+    } catch (error) {
+      console.error('Error removing portfolio file:', error);
+      throw error;
+    }
+  };
+
   // Check if user is authenticated
   const isAuthenticated = () => {
     const token = useCookie('token')?.value;
@@ -108,8 +170,11 @@ export const useUser = () => {
 
   return {
     getUserProfile,
+    getPublicUserProfile,
     updateUserProfile,
     uploadAvatar,
+    uploadPortfolioFile,
+    removePortfolioFile,
     isAuthenticated,
     logout,
     user

@@ -160,7 +160,7 @@ const portfolioItems = ref([]);
 const loading = ref(true);
 
 // Load-more state
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 12;
 const itemsToShow = ref(ITEMS_PER_PAGE);
 
 const categories = [

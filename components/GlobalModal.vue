@@ -300,11 +300,13 @@
 
 <script setup>
 import { useModal } from '~/composables/useModal'
+import { useToast } from '~/composables/useToast'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase.replace(/\/api$/, '')
 
 const { modalData, closeModal } = useModal()
+const { success: toastSuccess, error: toastError } = useToast()
 
 // Helper functions
 const getInitials = (firstName, lastName) => {
@@ -335,16 +337,13 @@ const handleTeacherAction = async (teacherId, action) => {
     await $fetch('/api/admin/confirm-teacher', {
       baseURL: apiBase,
       method: 'POST',
-      body: {
-        teacherId,
-        action
-      }
+      body: { teacherId, action }
     })
-    
-    // Close modal after action
+    toastSuccess(action === 'accept' ? 'Teacher confirmed successfully!' : 'Teacher request rejected.')
     closeModal()
   } catch (error) {
     console.error('Error confirming teacher:', error)
+    toastError('Failed to process teacher request. Please try again.')
   }
 }
 
@@ -353,16 +352,13 @@ const handleCompanyAction = async (companyId, action) => {
     await $fetch('/api/admin/confirm-company', {
       baseURL: apiBase,
       method: 'POST',
-      body: {
-        companyId,
-        action
-      }
+      body: { companyId, action }
     })
-    
-    // Close modal after action
+    toastSuccess(action === 'approve' ? 'Company approved successfully!' : 'Company request rejected.')
     closeModal()
   } catch (error) {
     console.error('Error confirming company:', error)
+    toastError('Failed to process company request. Please try again.')
   }
 }
 

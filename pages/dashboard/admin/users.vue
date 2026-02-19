@@ -318,6 +318,8 @@
 </template>
 
 <script setup>
+import { useToast } from '~/composables/useToast'
+const { success: toastSuccess, error: toastError } = useToast()
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase.replace(/\/api$/, '')
 
@@ -427,7 +429,7 @@ const fetchUsers = async () => {
     console.error('Error fetching users:', error)
     // Show empty state if API fails
     users.value = []
-    alert(error.message || 'Failed to fetch users')
+    toastError(error.message || 'Failed to fetch users')
   }
 }
 
@@ -478,13 +480,14 @@ const saveUser = async () => {
     
     if (response.success) {
       showEditModal.value = false
-      await fetchUsers() // Refresh the list
+      toastSuccess('User updated successfully!')
+      await fetchUsers()
     } else {
       throw new Error(response.error || 'Failed to update user')
     }
   } catch (error) {
     console.error('Error saving user:', error)
-    alert(error.message || 'Failed to update user')
+    toastError(error.message || 'Failed to update user')
   }
 }
 
@@ -520,18 +523,18 @@ const toggleUserStatus = async (user) => {
     });
     
     if (response.success) {
-      // Update local state immediately for better UX
       const userIndex = users.value.findIndex(u => (u._id || u.id) === userId);
       if (userIndex !== -1) {
         users.value[userIndex].isActive = response.data.isActive;
       }
-      await fetchUsers() // Refresh the list to ensure consistency
+      toastSuccess(`User ${response.data.isActive ? 'activated' : 'deactivated'} successfully!`)
+      await fetchUsers()
     } else {
       throw new Error(response.error || 'Failed to toggle user status')
     }
   } catch (error) {
     console.error('Error toggling user status:', error)
-    alert(error.message || 'Failed to toggle user status')
+    toastError(error.message || 'Failed to toggle user status')
   }
 }
 
@@ -568,15 +571,15 @@ const deleteUser = async (user) => {
       });
       
       if (response.success) {
-        // Remove from local state immediately
         users.value = users.value.filter(u => (u._id || u.id) !== userId);
-        await fetchUsers() // Refresh the list to ensure consistency
+        toastSuccess('User deleted successfully!')
+        await fetchUsers()
       } else {
         throw new Error(response.error || 'Failed to delete user')
       }
     } catch (error) {
       console.error('Error deleting user:', error)
-      alert(error.message || 'Failed to delete user')
+      toastError(error.message || 'Failed to delete user')
     }
   }
 }

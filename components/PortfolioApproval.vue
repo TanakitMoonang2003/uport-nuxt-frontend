@@ -12,32 +12,6 @@
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
       </div>
 
-      <!-- Error Message -->
-      <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg">
-        <div class="flex items-start">
-          <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div class="text-sm text-red-800">
-            <p class="font-semibold mb-1">Error</p>
-            <p>{{ errorMessage }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Success Message -->
-      <div v-if="successMessage" class="mb-6 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
-        <div class="flex items-start">
-          <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div class="text-sm text-green-800">
-            <p class="font-semibold mb-1">Success</p>
-            <p>{{ successMessage }}</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Empty State -->
       <div v-if="!isLoading && pendingPortfolios.length === 0" class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -152,6 +126,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuth } from '~/composables/useAuth';
+import { useToast } from '~/composables/useToast';
 
 const config = useRuntimeConfig();
 const apiBase = config.public.apiBase.replace(/\/api$/, '');
@@ -167,14 +142,12 @@ if (!user.value || (user.value.role !== 'admin' && user.value.role !== 'teacher'
 }
 
 const isLoading = ref(false);
-const errorMessage = ref('');
-const successMessage = ref('');
+const { success: toastSuccess, error: toastError } = useToast();
 const pendingPortfolios = ref([]);
 const processingPortfolio = ref(null);
 
 const fetchPendingPortfolios = async () => {
   isLoading.value = true;
-  errorMessage.value = '';
   
   try {
     // Get token from multiple sources
@@ -207,12 +180,11 @@ const fetchPendingPortfolios = async () => {
       pendingPortfolios.value = response.data;
       
     } else {
-      errorMessage.value = response.error || 'Failed to fetch pending portfolios';
-      console.error('❌ API error response:', response);
+      toastError(response.error || 'Failed to fetch pending portfolios');
     }
   } catch (error) {
     console.error('❌ Error fetching pending portfolios:', error);
-    errorMessage.value = error.message || 'Failed to fetch pending portfolios';
+    toastError(error.message || 'Failed to fetch pending portfolios');
   } finally {
     isLoading.value = false;
   }
@@ -222,8 +194,6 @@ const handleApprove = async (portfolio) => {
   if (processingPortfolio.value) return;
   
   processingPortfolio.value = portfolio._id;
-  errorMessage.value = '';
-  successMessage.value = '';
   
   try {
     let authToken = token.value;
@@ -256,20 +226,14 @@ const handleApprove = async (portfolio) => {
     });
     
     if (response.success) {
-      successMessage.value = `Portfolio "${portfolio.title}" has been approved`;
-      // Remove from pending list
+      toastSuccess(`Portfolio "${portfolio.title}" has been approved`);
       pendingPortfolios.value = pendingPortfolios.value.filter(p => p._id !== portfolio._id);
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        successMessage.value = '';
-      }, 3000);
     } else {
-      errorMessage.value = response.error || 'Failed to approve portfolio';
+      toastError(response.error || 'Failed to approve portfolio');
     }
   } catch (error) {
     console.error('❌ Error approving portfolio:', error);
-    errorMessage.value = error.message || 'Failed to approve portfolio';
+    toastError(error.message || 'Failed to approve portfolio');
   } finally {
     processingPortfolio.value = null;
   }
@@ -283,8 +247,6 @@ const handleReject = async (portfolio) => {
   }
   
   processingPortfolio.value = portfolio._id;
-  errorMessage.value = '';
-  successMessage.value = '';
   
   try {
     let authToken = token.value;
@@ -317,20 +279,14 @@ const handleReject = async (portfolio) => {
     });
     
     if (response.success) {
-      successMessage.value = `Portfolio "${portfolio.title}" has been rejected`;
-      // Remove from pending list
+      toastSuccess(`Portfolio "${portfolio.title}" has been rejected`);
       pendingPortfolios.value = pendingPortfolios.value.filter(p => p._id !== portfolio._id);
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        successMessage.value = '';
-      }, 3000);
     } else {
-      errorMessage.value = response.error || 'Failed to reject portfolio';
+      toastError(response.error || 'Failed to reject portfolio');
     }
   } catch (error) {
     console.error('❌ Error rejecting portfolio:', error);
-    errorMessage.value = error.message || 'Failed to reject portfolio';
+    toastError(error.message || 'Failed to reject portfolio');
   } finally {
     processingPortfolio.value = null;
   }

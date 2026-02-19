@@ -12,32 +12,6 @@
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
       </div>
 
-      <!-- Error Message -->
-      <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg">
-        <div class="flex items-start">
-          <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div class="text-sm text-red-800">
-            <p class="font-semibold mb-1">Error</p>
-            <p>{{ errorMessage }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Success Message -->
-      <div v-if="successMessage" class="mb-6 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
-        <div class="flex items-start">
-          <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div class="text-sm text-green-800">
-            <p class="font-semibold mb-1">Success</p>
-            <p>{{ successMessage }}</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Empty State -->
       <div v-if="!isLoading && pendingTeachers.length === 0" class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -159,6 +133,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuth } from '~/composables/useAuth';
+import { useToast } from '~/composables/useToast';
 
 const config = useRuntimeConfig();
 const apiBase = config.public.apiBase.replace(/\/api$/, '');
@@ -167,8 +142,7 @@ const { user, token } = useAuth();
 
 const pendingTeachers = ref([]);
 const isLoading = ref(false);
-const errorMessage = ref('');
-const successMessage = ref('');
+const { success: toastSuccess, error: toastError } = useToast();
 const processingTeacher = ref(null);
 
 // Check if user is admin or teacher
@@ -181,7 +155,6 @@ if (!user.value || (user.value.role !== 'admin' && user.value.role !== 'teacher'
 
 const fetchPendingTeachers = async () => {
   isLoading.value = true;
-  errorMessage.value = '';
   
   try {
     // Get token from multiple sources to ensure we have it
@@ -221,17 +194,16 @@ const fetchPendingTeachers = async () => {
       pendingTeachers.value = response.data;
      
     } else {
-      errorMessage.value = response.error || 'Failed to fetch teacher confirmations';
-      console.error('❌ API error response:', response);
+      toastError(response.error || 'Failed to fetch teacher confirmations');
     }
   } catch (error) {
     console.error('❌ Error fetching teacher confirmations:', error);
     if (error.status === 403) {
-      errorMessage.value = 'You do not have permission to access this page. Please login with Admin or Teacher account.';
+      toastError('You do not have permission to access this page.');
     } else if (error.status === 401) {
-      errorMessage.value = 'Please login again';
+      toastError('Please login again');
     } else {
-      errorMessage.value = 'Failed to fetch teacher confirmations. Please try again.';
+      toastError('Failed to fetch teacher confirmations. Please try again.');
     }
   } finally {
     isLoading.value = false;
@@ -240,8 +212,6 @@ const fetchPendingTeachers = async () => {
 
 const confirmTeacher = async (teacherId, action) => {
   processingTeacher.value = teacherId;
-  errorMessage.value = '';
-  successMessage.value = '';
   
   try {
     // Get token from multiple sources to ensure we have it
@@ -281,23 +251,19 @@ const confirmTeacher = async (teacherId, action) => {
     });
 
     if (response.success) {
-      successMessage.value = response.message;
-      // Remove the teacher from the list
+      toastSuccess(response.message || (action === 'accept' ? 'Teacher confirmed successfully!' : 'Teacher request rejected.'));
       pendingTeachers.value = pendingTeachers.value.filter(t => t._id !== teacherId);
-      
-     
     } else {
-      errorMessage.value = response.error || 'Failed to process teacher confirmation';
-      console.error('❌ API error response:', response);
+      toastError(response.error || 'Failed to process teacher confirmation');
     }
   } catch (error) {
     console.error('❌ Error processing teacher confirmation:', error);
     if (error.status === 403) {
-      errorMessage.value = 'You do not have permission to perform this action';
+      toastError('You do not have permission to perform this action');
     } else if (error.status === 401) {
-      errorMessage.value = 'Please login again';
+      toastError('Please login again');
     } else {
-      errorMessage.value = 'Failed to process teacher confirmation. Please try again.';
+      toastError('Failed to process teacher confirmation. Please try again.');
     }
   } finally {
     processingTeacher.value = null;

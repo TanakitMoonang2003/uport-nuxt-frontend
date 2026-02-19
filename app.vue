@@ -9,5 +9,8 @@
     
     <!-- Global Modal -->
     <GlobalModal />
+
+    <!-- Toast Notifications -->
+    <ToastNotification />
   </div>
 </template>

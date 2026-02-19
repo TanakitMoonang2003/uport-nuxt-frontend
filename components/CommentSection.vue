@@ -40,15 +40,6 @@
         </button>
       </div>
 
-      <!-- Error Message -->
-      <div v-if="errorMessage" class="mt-3 bg-red-50 border-l-4 border-red-400 p-3 rounded-r-lg">
-        <p class="text-sm text-red-800">{{ errorMessage }}</p>
-      </div>
-
-      <!-- Success Message -->
-      <div v-if="successMessage" class="mt-3 bg-green-50 border-l-4 border-green-400 p-3 rounded-r-lg">
-        <p class="text-sm text-green-800">{{ successMessage }}</p>
-      </div>
     </div>
 
     <!-- Comments List -->
@@ -78,6 +69,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useToast } from '~/composables/useToast';
 
 const props = defineProps({
   portfolioId: {
@@ -97,8 +89,7 @@ const newComment = ref('');
 const charCount = ref(0);
 const loading = ref(true);
 const isSubmitting = ref(false);
-const errorMessage = ref('');
-const successMessage = ref('');
+const { success: toastSuccess, error: toastError } = useToast();
 
 const canSubmit = computed(() => {
   return newComment.value.trim().length > 0 && newComment.value.length <= 500;
@@ -127,8 +118,6 @@ const loadComments = async () => {
 const handleSubmit = async () => {
   if (!canSubmit.value) return;
 
-  errorMessage.value = '';
-  successMessage.value = '';
   isSubmitting.value = true;
 
   try {
@@ -142,15 +131,11 @@ const handleSubmit = async () => {
       newComment.value = '';
       charCount.value = 0;
       
-      // Show success message
-      successMessage.value = 'Comment posted successfully!';
-      setTimeout(() => {
-        successMessage.value = '';
-      }, 3000);
+      toastSuccess('Comment posted successfully!');
     }
   } catch (error) {
     console.error('Failed to post comment:', error);
-    errorMessage.value = error.response?.data?.error || 'Failed to post comment. Please try again.';
+    toastError(error.response?.data?.error || 'Failed to post comment. Please try again.');
   } finally {
     isSubmitting.value = false;
   }
@@ -168,7 +153,7 @@ const handleDelete = async (commentId) => {
     }
   } catch (error) {
     console.error('Failed to delete comment:', error);
-    alert(error.response?.data?.error || 'Failed to delete comment. Please try again.');
+    toastError(error.response?.data?.error || 'Failed to delete comment. Please try again.');
   }
 };
 
