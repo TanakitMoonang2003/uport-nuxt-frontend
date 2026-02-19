@@ -26,7 +26,7 @@ export const useUser = () => {
   const getPublicUserProfile = async (email: string) => {
     try {
       const { $api } = useNuxtApp();
-      const response = await $api.get(`/user/profile/${encodeURIComponent(email)}`);
+      const response = await $api.get(`/user/profile/by-email`, { params: { email } });
 
       // Backend returns { success, data }
       if (response.data?.success && response.data.data) {
