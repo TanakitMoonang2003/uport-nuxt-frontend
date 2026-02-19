@@ -29,19 +29,7 @@
           
         <div v-if="portfolioItem" class="text-white">
           <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-            <span class="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold uppercase tracking-wide w-fit">
-              {{ portfolioItem.category }}
-            </span>
-            <!-- Debug info -->
-            <span v-if="user" class="text-xs bg-blue-500 px-2 py-1 rounded w-fit">
-            Portfolio: 
-            <NuxtLink 
-              :to="`/profile/${encodeURIComponent(portfolioItem.submittedBy)}`"
-              class="text-white hover:text-yellow-300 underline"
-            >
-              {{ portfolioItem.submittedBy }}
-            </NuxtLink>
-            </span>
+
           </div>
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{{ portfolioItem.title }}</h1>
           <p class="text-lg md:text-xl text-gray-300 mb-6">{{ portfolioItem.fullDescription || portfolioItem.description }}</p>
@@ -218,32 +206,13 @@
         </div>
       </div>
 
-      <!-- Features -->
+      <!-- Comment Section -->
       <div class="mt-8 md:mt-12">
-        <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-          <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-6">Key Features</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div 
-              v-for="feature in portfolioItem.features" 
-              :key="feature"
-              class="flex items-center p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg"
-            >
-              <svg class="w-5 h-5 text-yellow-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700 text-sm md:text-base">{{ feature }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Comment Section -->
-        <div class="mt-8 md:mt-12">
-          <CommentSection
-            v-if="portfolioItem"
-            :portfolio-id="portfolioItem.id"
-            :portfolio-owner="portfolioItem.submittedBy"
-          />
-        </div>
+        <CommentSection
+          v-if="portfolioItem"
+          :portfolio-id="portfolioItem.id"
+          :portfolio-owner="portfolioItem.submittedBy"
+        />
       </div>
     </div>
 

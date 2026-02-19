@@ -114,11 +114,11 @@
             results.
           </p>
         </div>
-        <div class="grid md:grid-cols-4 gap-8">
+        <div class="flex flex-wrap justify-center gap-8">
           <div
             v-for="(member, index) in teamMembers"
             :key="index"
-            class="group text-center"
+            class="group text-center w-64"
           >
             <div class="relative mb-6 overflow-hidden rounded-2xl">
               <img
@@ -307,27 +307,6 @@ const teamMembers = [
     bio: "Visionary leader with 15+ years in tech",
     image:
       "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
-  },
-  {
-    name: "Michael Chen",
-    role: "CTO",
-    bio: "Tech innovator and architecture expert",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Creative Director",
-    bio: "Award-winning designer and strategist",
-    image:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop",
-  },
-  {
-    name: "David Kim",
-    role: "Head of Development",
-    bio: "Full-stack expert and team leader",
-    image:
-      "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400&h=400&fit=crop",
   },
 ];
 
