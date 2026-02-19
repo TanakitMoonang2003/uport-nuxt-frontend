@@ -1146,7 +1146,7 @@ const handleOTPVerified = async (verificationData) => {
       email: data.email,
       username: data.username,
       password: data.password,
-      role: activeTab.value,
+      role: activeTab.value === 'student' ? 'user' : activeTab.value,
       otpVerified: true, // Mark as OTP verified
       userType: activeTab.value
     };
